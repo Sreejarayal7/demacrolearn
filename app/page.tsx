@@ -1,65 +1,62 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main style={{
+      minHeight: "100vh",
+      background: "linear-gradient(135deg, #0f172a, #1e3a5f, #0f172a)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: "center",
+      padding: "2rem",
+      fontFamily: "sans-serif"
+    }}>
+      <div style={{
+        background: "rgba(59,130,246,0.15)",
+        border: "1px solid rgba(59,130,246,0.3)",
+        borderRadius: "999px",
+        padding: "6px 16px",
+        color: "#60a5fa",
+        fontSize: "14px",
+        marginBottom: "24px"
+      }}>
+        AI-Powered Civic Learning Platform for India
+      </div>
+      <h1 style={{ fontSize: "64px", fontWeight: "bold", color: "white", margin: "0 0 16px" }}>
+        Demacro<span style={{ color: "#60a5fa" }}>Learn</span>
+      </h1>
+      <p style={{ color: "#94a3b8", fontSize: "20px", maxWidth: "600px", marginBottom: "40px" }}>
+        Politics explained visually and intelligently for every Indian citizen.
+        Understand bills, join debates, track current affairs.
+      </p>
+      <div style={{ display: "flex", gap: "16px", marginBottom: "80px" }}>
+        <button style={{ padding: "12px 32px", background: "#3b82f6", color: "white", border: "none", borderRadius: "999px", fontSize: "16px", fontWeight: "600", cursor: "pointer" }}>
+          Get Started Free
+        </button>
+        <button style={{ padding: "12px 32px", background: "transparent", color: "#94a3b8", border: "1px solid #475569", borderRadius: "999px", fontSize: "16px", fontWeight: "600", cursor: "pointer" }}>
+          Sign In
+        </button>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", maxWidth: "800px" }}>
+        {[
+          { label: "AI Explainer", icon: "AI", desc: "Topics simplified" },
+          { label: "Live Debates", icon: "VS", desc: "Anonymous arguments" },
+          { label: "Bills Tracker", icon: "PL", desc: "Parliament live" },
+          { label: "Bias Detector", icon: "BD", desc: "Fact vs opinion" },
+        ].map((item) => (
+          <div key={item.label} style={{
+            padding: "24px 16px",
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "16px",
+            color: "#cbd5e1"
+          }}>
+            <div style={{ fontSize: "20px", fontWeight: "bold", color: "#60a5fa", marginBottom: "8px" }}>{item.icon}</div>
+            <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{item.label}</div>
+            <div style={{ fontSize: "12px", color: "#64748b" }}>{item.desc}</div>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }
