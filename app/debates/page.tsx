@@ -65,17 +65,43 @@ const debates = [
   },
 ];
 
+type BiasResult = {
+  type: string;
+  score: number;
+  feedback: string;
+  suggestion: string;
+};
+
 export default function DebatesPage() {
   const [activeDebate, setActiveDebate] = useState<number | null>(null);
   const [argument, setArgument] = useState("");
   const [side, setSide] = useState<"for" | "against">("for");
   const [submitted, setSubmitted] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [biasResult, setBiasResult] = useState<BiasResult | null>(null);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!argument.trim()) return;
-    setSubmitted(true);
-    setArgument("");
-    setTimeout(() => setSubmitted(false), 3000);
+    setAnalyzing(true);
+    setBiasResult(null);
+    try {
+      const response = await fetch("/api/bias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ argument }),
+      });
+      const data = await response.json();
+      if (data.analysis) {
+        setBiasResult(data.analysis);
+        setSubmitted(true);
+        setArgument("");
+        setTimeout(() => setSubmitted(false), 3000);
+      }
+    } catch (error) {
+      console.error("Bias detection error:", error);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   return (
@@ -218,8 +244,6 @@ export default function DebatesPage() {
                     >
                       {debate.title}
                     </h3>
-
-                    {/* Vote bar */}
                     <div style={{ marginBottom: "12px" }}>
                       <div
                         style={{
@@ -254,7 +278,6 @@ export default function DebatesPage() {
                         />
                       </div>
                     </div>
-
                     <div style={{ display: "flex", gap: "16px" }}>
                       <span style={{ color: "#64748b", fontSize: "12px" }}>
                         👥 {debate.participants.toLocaleString()} participants
@@ -267,7 +290,6 @@ export default function DebatesPage() {
                       </span>
                     </div>
                   </div>
-
                   <button
                     onClick={() => setActiveDebate(debate.id)}
                     style={{
@@ -295,7 +317,10 @@ export default function DebatesPage() {
         {activeDebate && (
           <div>
             <button
-              onClick={() => setActiveDebate(null)}
+              onClick={() => {
+                setActiveDebate(null);
+                setBiasResult(null);
+              }}
               style={{
                 marginBottom: "24px",
                 padding: "8px 16px",
@@ -329,8 +354,9 @@ export default function DebatesPage() {
               >
                 {debates.find((d) => d.id === activeDebate)?.title}
               </h2>
-              <p style={{ color: "#64748b", fontSize: "14px", margin: 0 }}>
-                Anonymous debates on India&apos;s most important issues
+              <p style={{ color: "#64748b", fontSize: "13px", margin: 0 }}>
+                You are anonymous in this debate. Argue based on facts, not
+                emotions.
               </p>
             </div>
 
@@ -400,6 +426,95 @@ export default function DebatesPage() {
               />
             </div>
 
+            {/* Bias Result */}
+            {biasResult && (
+              <div
+                style={{
+                  background: "#0f172a",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  marginBottom: "16px",
+                }}
+              >
+                <p
+                  style={{
+                    color: "#94a3b8",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    margin: "0 0 12px",
+                  }}
+                >
+                  🤖 AI Bias Analysis:
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "12px",
+                    marginBottom: "12px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: "999px",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      background:
+                        biasResult.type === "Fact-Based"
+                          ? "rgba(16,185,129,0.15)"
+                          : biasResult.type === "Opinion"
+                            ? "rgba(59,130,246,0.15)"
+                            : biasResult.type === "Emotional"
+                              ? "rgba(245,158,11,0.15)"
+                              : "rgba(239,68,68,0.15)",
+                      color:
+                        biasResult.type === "Fact-Based"
+                          ? "#10b981"
+                          : biasResult.type === "Opinion"
+                            ? "#60a5fa"
+                            : biasResult.type === "Emotional"
+                              ? "#f59e0b"
+                              : "#ef4444",
+                    }}
+                  >
+                    {biasResult.type === "Fact-Based"
+                      ? "✅"
+                      : biasResult.type === "Opinion"
+                        ? "💭"
+                        : biasResult.type === "Emotional"
+                          ? "⚠️"
+                          : "🚫"}{" "}
+                    {biasResult.type}
+                  </span>
+                  <span
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: "999px",
+                      fontSize: "12px",
+                      background: "rgba(255,255,255,0.05)",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    Quality Score: {biasResult.score}/10
+                  </span>
+                </div>
+                <p
+                  style={{
+                    color: "#94a3b8",
+                    fontSize: "13px",
+                    margin: "0 0 8px",
+                  }}
+                >
+                  💡 {biasResult.feedback}
+                </p>
+                <p style={{ color: "#64748b", fontSize: "13px", margin: 0 }}>
+                  🔄 Counter-argument: {biasResult.suggestion}
+                </p>
+              </div>
+            )}
+
             {submitted && (
               <div
                 style={{
@@ -418,18 +533,19 @@ export default function DebatesPage() {
 
             <button
               onClick={handleSubmit}
+              disabled={analyzing}
               style={{
                 padding: "12px 32px",
-                background: "#8b5cf6",
+                background: analyzing ? "#334155" : "#8b5cf6",
                 color: "white",
                 border: "none",
                 borderRadius: "10px",
                 fontSize: "14px",
                 fontWeight: "600",
-                cursor: "pointer",
+                cursor: analyzing ? "not-allowed" : "pointer",
               }}
             >
-              Submit Argument 🗣️
+              {analyzing ? "Analyzing... 🤖" : "Submit Argument 🗣️"}
             </button>
           </div>
         )}
