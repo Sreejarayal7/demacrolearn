@@ -28,29 +28,27 @@ export default function TopicsPage() {
     setLoading(true);
     setExplanation("");
 
-    setTimeout(() => {
-      setExplanation(
-        `📚 Explanation of "${topic}" in ${selectedMode} mode:\n\n` +
-          `The ${topic} is one of the most discussed topics in Indian politics today.\n\n` +
-          `🔑 Key Points:\n` +
-          `• This topic affects millions of Indian citizens directly\n` +
-          `• It has been debated in Parliament multiple times\n` +
-          `• Different political parties have different views on this\n` +
-          `• The Supreme Court has also weighed in on this matter\n\n` +
-          `⚖️ Pros:\n` +
-          `• Brings uniformity and clarity\n` +
-          `• Protects citizen rights\n` +
-          `• Modernizes existing laws\n\n` +
-          `❌ Cons:\n` +
-          `• May affect existing practices\n` +
-          `• Implementation challenges\n` +
-          `• Political opposition\n\n` +
-          `💡 In Simple Terms:\n` +
-          `Think of it like updating the rules of a game that everyone plays — some players like the old rules, some want new ones. The government has to decide what's best for everyone.\n\n` +
-          `(AI explanation will be powered by Google Gemini in Phase 4)`,
-      );
+    try {
+      const response = await fetch("/api/explain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, mode: selectedMode }),
+      });
+
+      const data = await response.json();
+
+      if (data.explanation) {
+        setExplanation(data.explanation);
+      } else {
+        setExplanation(
+          "Sorry, could not generate explanation. Please try again.",
+        );
+      }
+    } catch {
+      setExplanation("Error connecting to AI. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
