@@ -3,8 +3,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Demacrolearn - Politics Explained Simply",
-  description: "AI-powered civic learning and debate platform",
+  title: "DemacroLearn - Politics Explained Simply",
+  description: "AI-powered civic learning and debate platform for India",
 };
 
 export default function RootLayout({
