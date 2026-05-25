@@ -21,7 +21,6 @@ export default function TopicsPage() {
   const [customTopic, setCustomTopic] = useState("");
   const [explanation, setExplanation] = useState("");
   const [loading, setLoading] = useState(false);
-
   const handleExplain = async () => {
     const topic = customTopic || selectedTopic;
     if (!topic) return;
@@ -38,15 +37,27 @@ export default function TopicsPage() {
       const data = await response.json();
 
       if (data.explanation) {
-        setExplanation(data.explanation);
+        // Typewriter effect
+        const text = data.explanation;
+        let i = 0;
+        setLoading(false);
+        const timer = setInterval(() => {
+          if (i < text.length) {
+            setExplanation(text.slice(0, i + 1));
+            i++;
+          } else {
+            clearInterval(timer);
+          }
+        }, 10);
       } else {
         setExplanation(
           "Sorry, could not generate explanation. Please try again.",
         );
+        setLoading(false);
       }
-    } catch {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
       setExplanation("Error connecting to AI. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -296,9 +307,37 @@ export default function TopicsPage() {
             >
               🤖
             </div>
-            <p style={{ color: "#94a3b8", fontSize: "14px" }}>
-              AI is analyzing and simplifying this topic for you...
+            <p
+              style={{
+                color: "#94a3b8",
+                fontSize: "14px",
+                marginBottom: "16px",
+              }}
+            >
+              AI is analyzing this topic...
             </p>
+            <div
+              style={{ display: "flex", gap: "8px", justifyContent: "center" }}
+            >
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    background: "#3b82f6",
+                    animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite`,
+                  }}
+                />
+              ))}
+            </div>
+            <style>{`
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1.2); }
+      }
+    `}</style>
           </div>
         )}
 
